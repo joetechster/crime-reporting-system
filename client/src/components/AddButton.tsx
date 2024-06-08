@@ -2,7 +2,6 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import DialogForm from "./NewReportDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,16 +11,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AddButton() {
+export default function AddButton({ open, setOpen }) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   return (
@@ -31,7 +25,6 @@ export default function AddButton() {
           <AddIcon />
         </Fab>
       </div>
-      <DialogForm open={open} handleClose={handleClose} title="Add New Report" />
     </>
   );
 }

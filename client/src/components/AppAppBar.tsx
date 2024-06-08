@@ -13,6 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
 import { getUser, signOut } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../utils/globals";
 
 const logoStyle = {
   width: "140px",
@@ -27,6 +28,7 @@ interface AppAppBarProps {
 
 function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
   const navigate = useNavigate();
+  const { user } = React.useMemo(getUser, [])!;
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -95,42 +97,6 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                 style={logoStyle}
                 alt="logo of sitemark"
               />
-              <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <MenuItem
-                  onClick={() => scrollToSection("features")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Features
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => scrollToSection("testimonials")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Testimonials
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => scrollToSection("highlights")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Highlights
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("pricing")} sx={{ py: "6px", px: "12px" }}>
-                  <Typography variant="body2" color="text.primary">
-                    Pricing
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("faq")} sx={{ py: "6px", px: "12px" }}>
-                  <Typography variant="body2" color="text.primary">
-                    FAQ
-                  </Typography>
-                </MenuItem>
-              </Box>
             </Box>
             <Box
               sx={{
@@ -140,6 +106,18 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+              {user && (
+                <div style={{ display: "flex", alignItems: "center", gap: 10, paddingRight: 10 }}>
+                  <img
+                    src={(baseUrl + user.passport) as string}
+                    alt="profile picture"
+                    style={{ width: 30, height: 30, borderRadius: "50%", objectFit: "cover" }}
+                  />
+                  <Typography variant="body1" color="text.primary">
+                    Hi {user.first_name || user.email}
+                  </Typography>
+                </div>
+              )}
               <SignInSignOut ls />
             </Box>
             <Box sx={{ display: { sm: "", md: "none" } }}>
@@ -164,18 +142,26 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                   <Box
                     sx={{
                       display: "flex",
-                      flexDirection: "column",
                       alignItems: "end",
+                      p: 2,
+                      justifyContent: "space-between",
                       flexGrow: 1,
                     }}
                   >
+                    {user && (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={(baseUrl + user.passport) as string}
+                          alt="profile picture"
+                          style={{ width: 30, height: 30, borderRadius: "50%", objectFit: "cover" }}
+                        />
+                        <Typography variant="body1" component="p" style={{ marginLeft: 10 }}>
+                          Hi {user.first_name || user.email}
+                        </Typography>
+                      </div>
+                    )}
                     <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                   </Box>
-                  <MenuItem onClick={() => scrollToSection("features")}>Features</MenuItem>
-                  <MenuItem onClick={() => scrollToSection("testimonials")}>Testimonials</MenuItem>
-                  <MenuItem onClick={() => scrollToSection("highlights")}>Highlights</MenuItem>
-                  <MenuItem onClick={() => scrollToSection("pricing")}>Pricing</MenuItem>
-                  <MenuItem onClick={() => scrollToSection("faq")}>FAQ</MenuItem>
                   <Divider />
                   <SignInSignOut />
                 </Box>

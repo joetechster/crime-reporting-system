@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -14,28 +14,47 @@ interface DialogFormProps {
   title: string;
   open: boolean;
   handleClose: () => any;
+  setReload: any;
 }
-export default function DialogForm({ title, open, handleClose }: DialogFormProps) {
+export default function DialogForm({ title, open, handleClose, setReload }: DialogFormProps) {
   const [alert, setAlert] = useState<any | null>(null);
   const [codes, setCodes] = useState<{ code: string; description: string }[]>([]);
   const [code, setCode] = useState<string | undefined>("");
   const [statement, setStatement] = useState<string | undefined>("");
+  const { user, token } = useMemo(getUser, [])!;
 
-  const handleAdd = () => {
-    const body = {
-      crime_statement: statement,
-      user: getUser()?.["user"].id,
-      crime_code: codes.find((item) => item.code === code)?.["code"],
-    };
-    fetch(`${baseUrl}report`, { method: "POST", body: JSON.stringify(body) })
-      .then(() => {
-        setAlert({ severity: "success", message: "Added report successfully" });
-        handleClose();
-      })
-      .catch((e) => {
-        setAlert({ severity: "error", message: "Oops something went wrong" });
-      });
+  const _handleClose = () => {
+    setStatement("");
+    setCode("");
+    setAlert(null);
+    handleClose();
+    window.location.reload();
   };
+  const handleAdd = async () => {
+    try {
+      const res = await fetch(`${baseUrl}report/`, {
+        method: "POST",
+        body: JSON.stringify({
+          crime_statement: statement,
+          user: user.id,
+          crime_code: codes.find((item) => item.code === code)?.["code"],
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setAlert({ severity: "success", message: "Added report successfully" });
+      setTimeout(_handleClose, 1000);
+    } catch (e) {
+      setAlert({ severity: "error", message: "Oops something went wrong" });
+      console.log(e);
+    } finally {
+    }
+  };
+
   useLayoutEffect(() => {
     fetch(`${baseUrl}crime-codes`)
       .then((res) => res.json())

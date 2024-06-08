@@ -5,7 +5,7 @@ from .models import CustomUser, Report, CrimeCode
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('email', 'username', 'is_staff', 'is_active', 'passport')
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'username', 'passport')}),
+        (None, {'fields': ('first_name', 'last_name', 'email', 'password', 'username', 'passport')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     # Password field should be hidden for security reasons

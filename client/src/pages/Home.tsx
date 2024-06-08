@@ -26,7 +26,6 @@ export default function LandingPage() {
       <CssBaseline />
       <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
       <Hero />
-      <AddButton />
     </Layout>
   );
 }
